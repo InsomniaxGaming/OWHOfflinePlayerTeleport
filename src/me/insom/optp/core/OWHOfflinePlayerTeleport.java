@@ -107,7 +107,7 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 					{
 						//Player's not online. Replace their current location in config with command sender's
 						this.setLocation(args[0], ((Player)sender).getLocation());
-						sender.sendMessage("Offline player successfully teleported to you.");
+						sender.sendMessage(ChatColor.GOLD + "*Please renounce the urge to scream bloody murder while we set " + Bukkit.getOfflinePlayer(args[0]).getName() + "'s location to yours...*");
 						
 					}
 				}
