@@ -1,0 +1,9 @@
+name: OWHOfflineTeleport
+main: me.insom.optp.core.OWHOfflinePlayerTeleport
+version: 1.0
+
+commands:
+  offlinetp:
+    description: "Teleport to offline players!"
+    usage: "/offlinetp <player>"
+    aliases: [otp]
