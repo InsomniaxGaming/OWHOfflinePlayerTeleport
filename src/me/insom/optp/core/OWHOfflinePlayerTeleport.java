@@ -43,7 +43,7 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 			
 			if(sender instanceof Player) // Check that sender is a Player. Silly consoles can't tp!
 			{
-				if(args.length > 0) // Make sure sender told us who to tp them to
+				if(args.length > 0) // Make sure sender told us who to teleport them to
 				{
 					if(permissions.has(sender, tpNode))
 					{
@@ -59,7 +59,7 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 						{
 							
 							// Player isn't online; check our config for location of player
-							Location location = this.getLocationFromConfig(args[0]);
+							Location location = this.getLocation(args[0]);
 							
 							if(location != null)
 							{
@@ -80,13 +80,34 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 		
 		if(label.equalsIgnoreCase("offlinetphere") || label.equalsIgnoreCase("otphere"))
 		{
-			
+			if(args.length > 0) // Make sure sender told us who to teleport to them
+			{
+				if(permissions.has(sender, tphereNode))
+				{
+					//Has permission, let's do this thang
+					if(Bukkit.getPlayer(args[0]) != null)
+					{
+						Bukkit.getPlayer(args[0]).teleport(((Player)sender).getLocation()); // If player is online, just teleport like normal
+						sender.sendMessage(ChatColor.GOLD + "*Please contain yourself while we hire a bountyhunter to kidnap " + Bukkit.getPlayer(args[0]).getName() + " for you...*");
+						
+						//TODO add functionality similar to /tpohere(?)
+						
+					} else
+					{
+						//Player's not online. Replace their current location in config with command sender's
+						this.setLocation(args[0], ((Player)sender).getLocation());
+						sender.sendMessage("Offline player successfully teleported to you.");
+						
+					}
+				}
+			}
+			return true;
 		}
 		
 		return false;
 	}
 	
-	public Location getLocationFromConfig(String playerName)
+	public Location getLocation(String playerName)
 	{
 		Vector vector = myConfig.getVector("locations." + playerName + ".vector");
 		String worldName = myConfig.getString("locations."+ playerName + ".world");
@@ -95,6 +116,12 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 			return vector.toLocation(getServer().getWorld(worldName));
 		}
 		return null;
+	}
+	
+	public void setLocation(String playerName, Location location)
+	{
+		myConfig.set("locations." + playerName + ".vector", location.toVector());
+		myConfig.set("locations." + playerName + ".world", location.getWorld().getName());
 	}
 
 }
