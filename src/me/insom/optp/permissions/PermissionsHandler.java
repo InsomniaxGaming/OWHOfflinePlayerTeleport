@@ -2,7 +2,7 @@ package me.insom.optp.permissions;
 
 import net.milkbowl.vault.permission.Permission;
 
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import me.insom.optp.core.OWHOfflinePlayerTeleport;
@@ -26,8 +26,8 @@ public class PermissionsHandler {
         return (permission != null);
     }
 	
-	public boolean has(Player player, String node)
+	public boolean has(CommandSender sender, String node)
 	{
-		return permission.has(player, node);
+		return permission.has(sender, node);
 	}
 }
