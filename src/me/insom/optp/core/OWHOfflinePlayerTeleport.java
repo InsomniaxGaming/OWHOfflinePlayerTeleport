@@ -31,9 +31,14 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 			getServer().getLogger().info("Failed to setup permissions! Disabling");
 			this.getServer().getPluginManager().disablePlugin(this);
 		}
+		
+		myConfig = this.getConfig();
 	}
 	
-	public void onDisable(){}
+	public void onDisable()
+	{
+		this.saveConfig();
+	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
 	{
@@ -107,6 +112,7 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 		return false;
 	}
 	
+	//Retrieve location from config. Null if not found
 	public Location getLocation(String playerName)
 	{
 		Vector vector = myConfig.getVector("locations." + playerName + ".vector");
@@ -118,10 +124,10 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 		return null;
 	}
 	
+	//Set specified player's location in config.
 	public void setLocation(String playerName, Location location)
 	{
 		myConfig.set("locations." + playerName + ".vector", location.toVector());
 		myConfig.set("locations." + playerName + ".world", location.getWorld().getName());
 	}
-
 }
