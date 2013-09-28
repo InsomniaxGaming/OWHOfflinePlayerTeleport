@@ -1,5 +1,7 @@
 package me.insom.optp.core;
 
+import me.insom.optp.listeners.JoinListener;
+import me.insom.optp.listeners.QuitListener;
 import me.insom.optp.permissions.PermissionsHandler;
 
 import org.bukkit.Bukkit;
@@ -33,6 +35,10 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 		}
 		
 		myConfig = this.getConfig();
+		
+		//Enable listeners
+		getServer().getPluginManager().registerEvents(new JoinListener(this), this);
+		getServer().getPluginManager().registerEvents(new QuitListener(this), this);
 	}
 	
 	public void onDisable()
@@ -115,6 +121,9 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 	//Retrieve location from config. Null if not found
 	public Location getLocation(String playerName)
 	{
+		
+		playerName = Bukkit.getOfflinePlayer(playerName).getName(); // Change name to most accurate name
+		
 		Vector vector = myConfig.getVector("locations." + playerName + ".vector");
 		String worldName = myConfig.getString("locations."+ playerName + ".world");
 		if((vector != null) && (worldName != null))
@@ -127,6 +136,9 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 	//Set specified player's location in config.
 	public void setLocation(String playerName, Location location)
 	{
+		
+		playerName = Bukkit.getOfflinePlayer(playerName).getName(); // Change name to most accurate name
+		
 		myConfig.set("locations." + playerName + ".vector", location.toVector());
 		myConfig.set("locations." + playerName + ".world", location.getWorld().getName());
 	}
