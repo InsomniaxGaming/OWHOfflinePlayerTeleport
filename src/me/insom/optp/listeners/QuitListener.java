@@ -20,7 +20,7 @@ public class QuitListener implements Listener{
 	public void onPlayerQuit(PlayerQuitEvent event)
 	{
 		// Put player's location into config and save
-		myPlugin.setLocation(event.getPlayer().getName(), event.getPlayer().getLocation());
+		myPlugin.setLocation(event.getPlayer().getName(), null, event.getPlayer().getLocation());
 		myPlugin.saveConfig();
 	}
 

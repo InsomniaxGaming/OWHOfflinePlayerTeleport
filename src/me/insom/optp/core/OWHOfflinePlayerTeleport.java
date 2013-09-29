@@ -106,7 +106,7 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 					} else
 					{
 						//Player's not online. Replace their current location in config with command sender's
-						this.setLocation(args[0], ((Player)sender).getLocation());
+						this.setLocation(args[0], sender.getName(),((Player)sender).getLocation());
 						sender.sendMessage(ChatColor.GOLD + "*Please renounce the urge to scream bloody murder while we set " + Bukkit.getOfflinePlayer(args[0]).getName() + "'s location to yours...*");
 						
 					}
@@ -134,12 +134,19 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 	}
 	
 	//Set specified player's location in config.
-	public void setLocation(String playerName, Location location)
+	public void setLocation(String playerName, String teleporterName, Location location)
 	{
 		
 		playerName = Bukkit.getOfflinePlayer(playerName).getName(); // Change name to most accurate name
 		
 		myConfig.set("locations." + playerName + ".vector", location.toVector());
 		myConfig.set("locations." + playerName + ".world", location.getWorld().getName());
+		myConfig.set("locations." + playerName + ".lastTeleporter", teleporterName); // Add the player who teleported did the location setting.
+	}
+	
+	// Retrieve the last person to teleport the specified player
+	public String getLastTP(String playerName)
+	{
+		return myConfig.getString("locations." + playerName + ".lastTeleporter");
 	}
 }
