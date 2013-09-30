@@ -46,6 +46,7 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 	
 	public void onDisable()
 	{
+		this.saveAllLocations(); // Save the location of every online player
 		this.saveConfig();
 	}
 	
@@ -147,7 +148,7 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 							if(permissions.has(sender, tpBypassNode) == false)
 							{
 								// No perms to bypass, tell player to go f himself
-								sender.sendMessage(ChatColor.RED + "" + Bukkit.getPlayer(args[0]).getName() + " has teleporting disabled.");
+								sender.sendMessage(ChatColor.RED + "" + Bukkit.getOfflinePlayer(args[0]).getName() + " has teleporting disabled.");
 								return true;
 							}						
 						}
@@ -220,6 +221,13 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 		return myConfig.getString("locations." + playerName + ".lastTeleporter");
 	}
 	
+	// Set last teleporter for specified player
+	public void setLastTP(String playerName, String lastTeleporter)
+	{
+		myConfig.set("locations." + playerName + ".lastTeleporter", lastTeleporter);
+		this.saveConfig();
+	}
+	
 	public void disableTP(String playerName, boolean toggle)
 	{
 		myConfig.set("locations." + playerName + ".disabled", toggle);
@@ -230,6 +238,14 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 	public boolean getDisabledTP(String playerName)
 	{
 		return myConfig.getBoolean("locations." + playerName + ".disabled", false);
+	}
+	
+	public void saveAllLocations()
+	{
+		for(Player p : Bukkit.getOnlinePlayers())
+		{
+			this.setLocation(p.getName(), null, p.getLocation());
+		}
 	}
 	
 }

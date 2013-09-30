@@ -29,6 +29,9 @@ public class JoinListener implements Listener{
 			if(lastTeleporter != null)
 			{
 				event.getPlayer().sendMessage(ChatColor.GOLD + "You were stolen by " + lastTeleporter);	
+				
+				// Remove last Teleporter
+				myPlugin.setLastTP(event.getPlayer().getName(), null);
 			}
 			event.getPlayer().teleport(location); // If location exists, send player there
 		}
