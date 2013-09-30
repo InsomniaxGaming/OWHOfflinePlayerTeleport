@@ -22,6 +22,9 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 	String tpNode = "OWHOPTP.tp";
 	String tphereNode = "OWHOPTP.tphere";
 	
+	String tpToggleNode = "OWHOPTP.admin.tpdisable";
+	String tpBypassNode = "OWHOPTP.admin.tpbypass";
+	
 	public void onEnable()
 	{
 		getServer().getLogger().info("Enabling OWHOPTP");
@@ -61,6 +64,17 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 						//Player has permission!
 						if(Bukkit.getPlayer(args[0]) != null)
 						{
+							// Check if the player has tp disabled, and if the sender has the bypass node
+							if(this.getDisabledTP(Bukkit.getPlayer(args[0]).getName()))
+							{
+								if(permissions.has(sender, tpBypassNode) == false)
+								{
+									// No perms to bypass, tell player to go f himself
+									sender.sendMessage(ChatColor.RED + "" + Bukkit.getPlayer(args[0]).getName() + " has teleporting disabled.");
+									return true;
+								}						
+							}
+							
 							((Player) sender).teleport(Bukkit.getPlayer(args[0])); // If player is online, just teleport like normal
 							sender.sendMessage(ChatColor.GOLD + "*Please stand by while a portal to the 7th dimension is formed for you...*");
 							
@@ -68,6 +82,16 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 							
 						} else
 						{
+							// Check if the player has tp disabled, and if the sender has the bypass node
+							if(this.getDisabledTP(Bukkit.getOfflinePlayer(args[0]).getName()))
+							{
+								if(permissions.has(sender, tpBypassNode) == false)
+								{
+									// No perms to bypass, tell player to go f himself
+									sender.sendMessage(ChatColor.RED + "" + Bukkit.getPlayer(args[0]).getName() + " has teleporting disabled.");
+									return true;
+								}						
+							}
 							
 							// Player isn't online; check our config for location of player
 							Location location = this.getLocation(args[0]);
@@ -95,9 +119,21 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 			{
 				if(permissions.has(sender, tphereNode))
 				{
+					
 					//Has permission, let's do this thang
 					if(Bukkit.getPlayer(args[0]) != null)
 					{
+						// Check if the player has tp disabled, and if the sender has the bypass node
+						if(this.getDisabledTP(Bukkit.getPlayer(args[0]).getName()))
+						{
+							if(permissions.has(sender, tpBypassNode) == false)
+							{
+								// No perms to bypass, tell player to go f himself
+								sender.sendMessage(ChatColor.RED + "" + Bukkit.getPlayer(args[0]).getName() + " has teleporting disabled.");
+								return true;
+							}						
+						}
+						
 						Bukkit.getPlayer(args[0]).teleport(((Player)sender).getLocation()); // If player is online, just teleport like normal
 						sender.sendMessage(ChatColor.GOLD + "*Please contain yourself while we hire a bountyhunter to kidnap " + Bukkit.getPlayer(args[0]).getName() + " for you...*");
 						
@@ -105,11 +141,45 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 						
 					} else
 					{
+						// Check if the player has tp disabled, and if the sender has the bypass node
+						if(this.getDisabledTP(Bukkit.getOfflinePlayer(args[0]).getName()))
+						{
+							if(permissions.has(sender, tpBypassNode) == false)
+							{
+								// No perms to bypass, tell player to go f himself
+								sender.sendMessage(ChatColor.RED + "" + Bukkit.getPlayer(args[0]).getName() + " has teleporting disabled.");
+								return true;
+							}						
+						}
+						
 						//Player's not online. Replace their current location in config with command sender's
 						this.setLocation(args[0], sender.getName(),((Player)sender).getLocation());
 						sender.sendMessage(ChatColor.GOLD + "*Please renounce the urge to scream bloody murder while we set " + Bukkit.getOfflinePlayer(args[0]).getName() + "'s location to yours...*");
 						
 					}
+				}
+			}
+			return true;
+		}
+		
+		if(label.equalsIgnoreCase("toggleofflinetp") || label.equalsIgnoreCase("totp"))
+		{
+			if(sender instanceof Player)
+			{
+				if(permissions.has(sender, tpToggleNode))
+				{
+					
+					if(this.getDisabledTP(sender.getName())) // Check if player currently has TP disabled
+					{
+						sender.sendMessage("Teleporting enabled. People may now teleport to you / teleport you to them.");
+						this.disableTP(sender.getName(), false);
+						
+					}else
+					{
+						sender.sendMessage("Teleporting disabled. People may no longer teleport to you / teleport you to them.");
+						this.disableTP(sender.getName(), true);
+					}
+					
 				}
 			}
 			return true;
@@ -149,4 +219,17 @@ public class OWHOfflinePlayerTeleport extends JavaPlugin{
 	{
 		return myConfig.getString("locations." + playerName + ".lastTeleporter");
 	}
+	
+	public void disableTP(String playerName, boolean toggle)
+	{
+		myConfig.set("locations." + playerName + ".disabled", toggle);
+		this.saveConfig();
+	}
+	
+	// Returns whether player has TP disabled or not
+	public boolean getDisabledTP(String playerName)
+	{
+		return myConfig.getBoolean("locations." + playerName + ".disabled", false);
+	}
+	
 }

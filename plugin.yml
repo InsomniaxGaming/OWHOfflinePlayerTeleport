@@ -11,3 +11,7 @@ commands:
     description: "Teleport offline players to you!"
     usage: "/offlinetphere <player>"
     aliases: [otphere]
+  toggleofflinetp:
+    description: "Disable/enable the ability for others to tp to you"
+    usage: "/totp"
+    aliases: [totp]
